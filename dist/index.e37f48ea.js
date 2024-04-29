@@ -605,7 +605,8 @@ const showRecepie = async function() {
         // Render recipe
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
     } catch (error) {
-        console.error(error);
+        (0, _recipeViewJsDefault.default).renderError();
+    // console.error(error);
     }
 };
 const init = function() {
@@ -2489,7 +2490,8 @@ const loadRecipe = async function(id) {
         console.log(state.recipe);
     } catch (error) {
         // Temp error handling
-        console.error(`${error} \u{1F4A5}\u{1F4A5}\u{1F4A5}`);
+        throw error;
+    // console.error(`${error} 💥💥💥`);
     }
 };
 
@@ -2538,6 +2540,8 @@ var _fractional = require("fractional");
 class RecipeView {
     #parentElement = document.querySelector(".recipe");
     #data;
+    #errorMessage = `Something went wrong. Recipe could not be found.`;
+    #message = ``;
     render(data) {
         this.#data = data;
         const markup = this._generateMarkup();
@@ -2547,7 +2551,7 @@ class RecipeView {
     _clear() {
         this.#parentElement.innerHTML = "";
     }
-    renderSpinner = function() {
+    renderSpinner() {
         const markup = `
       <div class="spinner">
         <svg>
@@ -2555,15 +2559,43 @@ class RecipeView {
         </svg>
       </div>
     `;
-        this.#parentElement.innerHTML = "";
+        this._clear();
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-    };
-    addHandlerRender = function(recipe) {
+    }
+    renderError(message = this.#errorMessage) {
+        const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+        this._clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    renderMessage(message = this.#message) {
+        const markup = `
+      <div class="message">
+        <div>
+          <svg>
+            <use href="${(0, _iconsSvgDefault.default)}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+        this._clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    addHandlerRender(recipe) {
         [
             "hashchange",
             "load"
         ].forEach((ev)=>window.addEventListener(ev, recipe));
-    };
+    }
     _generateMarkup() {
         return `
     <figure class="recipe__fig">
