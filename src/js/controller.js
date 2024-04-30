@@ -30,6 +30,18 @@ const showRecepie = async function () {
   }
 };
 
+const controlShowResults = async function () {
+  try {
+    await model.loadSearchResults('pizza');
+
+    console.log(model.state.search);
+  } catch (error) {
+    console.log(`${error} 💥💥💥💥`);
+  }
+};
+
+controlShowResults();
+
 const init = function () {
   recipeView.addHandlerRender(showRecepie);
 };
