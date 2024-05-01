@@ -47,7 +47,7 @@ const controlShowResults = async function () {
 
     // 3. Render results
     // console.log(model.state.search);
-    ResultsView.render(model.state.search.results);
+    ResultsView.render(model.getSearchResultsPage(2));
   } catch (error) {
     console.log(`${error} 💥💥💥💥`);
   }
