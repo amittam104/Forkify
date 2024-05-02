@@ -625,16 +625,24 @@ const controlShowResults = async function() {
         await _modelJs.loadSearchResults(query);
         // 3. Render results
         // console.log(model.state.search);
-        (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(6));
+        (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
         // 4. Render Pagination
         (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
     } catch (error) {
         console.log(`${error} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
     }
 };
+const controllerPagination = function(pageTO) {
+    // 3. Render results
+    // console.log(model.state.search);
+    (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(pageTO));
+    // 4. Render Pagination
+    (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
+};
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(showRecepie);
     (0, _searchViewJsDefault.default).addHandlerSearch(controlShowResults);
+    (0, _paginationViewJsDefault.default).addHandlerPagination(controllerPagination);
 };
 init();
 
@@ -3114,6 +3122,14 @@ var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class PaginationView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector(".pagination");
+    addHandlerPagination(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--inline");
+            if (!btn) return;
+            const btnGoto = +btn.dataset.goto;
+            handler(btnGoto);
+        });
+    }
     _generateMarkup() {
         const data = this._data;
         const numPages = Math.ceil(data.results.length / data.resultPage);
@@ -3130,7 +3146,7 @@ class PaginationView extends (0, _viewJsDefault.default) {
     }
     _backwardBtnMarkup() {
         return `
-        <button class="btn--inline pagination__btn--prev">
+        <button data-goto="${this._data.page - 1}" class="btn--inline pagination__btn--prev">
           <svg class="search__icon">
             <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
           </svg>
@@ -3140,7 +3156,7 @@ class PaginationView extends (0, _viewJsDefault.default) {
     }
     _forwardBtnMarkup() {
         return `
-      <button class="btn--inline pagination__btn--next">
+      <button data-goto="${this._data.page + 1}" class="btn--inline pagination__btn--next">
         <span>Page ${this._data.page + 1}</span>
         <svg class="search__icon">
           <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
@@ -3150,13 +3166,13 @@ class PaginationView extends (0, _viewJsDefault.default) {
     }
     _bothBtnMarkup() {
         return `
-      <button class="btn--inline pagination__btn--prev">
+      <button data-goto="${this._data.page - 1}" class="btn--inline pagination__btn--prev">
         <svg class="search__icon">
           <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
         </svg>
         <span>Page ${this._data.page - 1}</span>
       </button>
-      <button class="btn--inline pagination__btn--next">
+      <button data-goto="${this._data.page + 1}" class="btn--inline pagination__btn--next">
         <span>Page ${this._data.page + 1}</span>
         <svg class="search__icon">
             <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>

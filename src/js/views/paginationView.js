@@ -4,6 +4,17 @@ import icons from 'url:../../img/icons.svg';
 class PaginationView extends View {
   _parentElement = document.querySelector('.pagination');
 
+  addHandlerPagination(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--inline');
+
+      if (!btn) return;
+
+      const btnGoto = +btn.dataset.goto;
+      handler(btnGoto);
+    });
+  }
+
   _generateMarkup() {
     const data = this._data;
     const numPages = Math.ceil(data.results.length / data.resultPage);
@@ -25,7 +36,9 @@ class PaginationView extends View {
 
   _backwardBtnMarkup() {
     return `
-        <button class="btn--inline pagination__btn--prev">
+        <button data-goto="${
+          this._data.page - 1
+        }" class="btn--inline pagination__btn--prev">
           <svg class="search__icon">
             <use href="${icons}#icon-arrow-left"></use>
           </svg>
@@ -36,7 +49,9 @@ class PaginationView extends View {
 
   _forwardBtnMarkup() {
     return `
-      <button class="btn--inline pagination__btn--next">
+      <button data-goto="${
+        this._data.page + 1
+      }" class="btn--inline pagination__btn--next">
         <span>Page ${this._data.page + 1}</span>
         <svg class="search__icon">
           <use href="${icons}#icon-arrow-right"></use>
@@ -47,13 +62,17 @@ class PaginationView extends View {
 
   _bothBtnMarkup() {
     return `
-      <button class="btn--inline pagination__btn--prev">
+      <button data-goto="${
+        this._data.page - 1
+      }" class="btn--inline pagination__btn--prev">
         <svg class="search__icon">
           <use href="${icons}#icon-arrow-left"></use>
         </svg>
         <span>Page ${this._data.page - 1}</span>
       </button>
-      <button class="btn--inline pagination__btn--next">
+      <button data-goto="${
+        this._data.page + 1
+      }" class="btn--inline pagination__btn--next">
         <span>Page ${this._data.page + 1}</span>
         <svg class="search__icon">
             <use href="${icons}#icon-arrow-right"></use>
