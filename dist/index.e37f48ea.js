@@ -639,8 +639,15 @@ const controllerPagination = function(pageTO) {
     // 4. Render Pagination
     (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
 };
+const controlServings = function(changeServings) {
+    // Update servings and ingredients quantity in state
+    _modelJs.updateServings(changeServings);
+    // Update the Recipe view
+    (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+};
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(showRecepie);
+    (0, _recipeViewJsDefault.default).addHandlerUpdateServings(controlServings);
     (0, _searchViewJsDefault.default).addHandlerSearch(controlShowResults);
     (0, _paginationViewJsDefault.default).addHandlerPagination(controllerPagination);
 };
@@ -1886,6 +1893,7 @@ parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
 parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
+parcelHelpers.export(exports, "updateServings", ()=>updateServings);
 var _configJs = require("./config.js");
 var _helpersJs = require("./helpers.js");
 const state = {
@@ -1943,6 +1951,12 @@ const getSearchResultsPage = function(page = state.search.page) {
     const start = (page - 1) * state.search.resultPage;
     const end = page * state.search.resultPage;
     return state.search.results.slice(start, end);
+};
+const updateServings = function(newServings) {
+    state.recipe.ingredients.forEach((ing)=>{
+        ing.quantity = ing.quantity * newServings / state.recipe.servings;
+    });
+    state.recipe.servings = newServings;
 };
 
 },{"./config.js":"k5Hzs","./helpers.js":"hGI1E","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
@@ -2610,11 +2624,19 @@ class RecipeView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector(".recipe");
     _errorMessage = `Could not find the recipes. Try Again!`;
     _message = ``;
-    addHandlerRender(recipe) {
+    addHandlerRender(handler) {
         [
             "hashchange",
             "load"
-        ].forEach((ev)=>window.addEventListener(ev, recipe));
+        ].forEach((ev)=>window.addEventListener(ev, handler));
+    }
+    addHandlerUpdateServings(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--update-servings");
+            if (!btn) return;
+            const changeServings = +btn.dataset.servings;
+            if (changeServings > 0) handler(changeServings);
+        });
     }
     _generateMarkup() {
         return `
@@ -2641,12 +2663,12 @@ class RecipeView extends (0, _viewJsDefault.default) {
         <span class="recipe__info-text">servings</span>
 
         <div class="recipe__info-buttons">
-          <button class="btn--tiny btn--increase-servings">
+          <button data-servings="${this._data.servings - 1}" class="btn--tiny btn--update-servings">
             <svg>
               <use href="${0, _iconsSvgDefault.default}#icon-minus-circle"></use>
             </svg>
           </button>
-          <button class="btn--tiny btn--increase-servings">
+          <button data-servings="${this._data.servings + 1}" class="btn--tiny btn--update-servings">
             <svg>
               <use href="${0, _iconsSvgDefault.default}#icon-plus-circle"></use>
             </svg>
