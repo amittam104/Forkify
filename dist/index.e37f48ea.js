@@ -643,7 +643,8 @@ const controlServings = function(changeServings) {
     // Update servings and ingredients quantity in state
     _modelJs.updateServings(changeServings);
     // Update the Recipe view
-    (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+    // recipeView.render(model.state.recipe);
+    (0, _recipeViewJsDefault.default).update(_modelJs.state.recipe);
 };
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(showRecepie);
@@ -2745,6 +2746,21 @@ class View {
         this._clear();
         this._parentElement.insertAdjacentHTML("afterbegin", markup);
     }
+    update(data) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+        this._data = data;
+        const newMarkup = this._generateMarkup();
+        const newDOM = document.createRange().createContextualFragment(newMarkup);
+        const newElements = Array.from(newDOM.querySelectorAll("*"));
+        const curElements = Array.from(this._parentElement.querySelectorAll("*"));
+        newElements.forEach((newEl, i)=>{
+            const curEl = curElements[i];
+            if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== "") curEl.textContent = newEl.textContent;
+            if (!newEl.isEqualNode(curEl)) Array.from(newEl.attributes).forEach((attr)=>{
+                curEl.setAttribute(attr.name, attr.value);
+            });
+        });
+    }
     _clear() {
         this._parentElement.innerHTML = "";
     }
@@ -3156,7 +3172,7 @@ class PaginationView extends (0, _viewJsDefault.default) {
         const data = this._data;
         const numPages = Math.ceil(data.results.length / data.resultPage);
         let currPage = this._data.page;
-        console.log(numPages, currPage);
+        // console.log(numPages, currPage);
         // 1. Current Page 1 and there are other pages
         if (currPage === 1 && numPages > 1) return this._forwardBtnMarkup();
         // 2. On other pages

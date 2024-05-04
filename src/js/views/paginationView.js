@@ -19,7 +19,7 @@ class PaginationView extends View {
     const data = this._data;
     const numPages = Math.ceil(data.results.length / data.resultPage);
     let currPage = this._data.page;
-    console.log(numPages, currPage);
+    // console.log(numPages, currPage);
 
     // 1. Current Page 1 and there are other pages
     if (currPage === 1 && numPages > 1) return this._forwardBtnMarkup();
