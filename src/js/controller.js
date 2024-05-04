@@ -23,6 +23,8 @@ const showRecepie = async function () {
 
     if (!id) return;
 
+    ResultsView.update(model.getSearchResultsPage());
+
     // 1. Render Spinner
     recipeView.renderSpinner();
 
