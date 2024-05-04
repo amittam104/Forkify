@@ -59,10 +59,10 @@ const controlShowResults = async function () {
   }
 };
 
-const controllerPagination = function (pageTO) {
+const controllerPagination = function (pageTo) {
   // 3. Render results
   // console.log(model.state.search);
-  ResultsView.render(model.getSearchResultsPage(pageTO));
+  ResultsView.render(model.getSearchResultsPage(pageTo));
 
   // 4. Render Pagination
   paginationView.render(model.state.search);

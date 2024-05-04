@@ -633,10 +633,10 @@ const controlShowResults = async function() {
         console.log(`${error} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
     }
 };
-const controllerPagination = function(pageTO) {
+const controllerPagination = function(pageTo) {
     // 3. Render results
     // console.log(model.state.search);
-    (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(pageTO));
+    (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(pageTo));
     // 4. Render Pagination
     (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
 };
@@ -1941,8 +1941,8 @@ const loadSearchResults = async function(query) {
                 image: rec.image_url
             };
         });
-    // console.log(data.data.recipes);
-    // console.log(state);
+        // Reset the search results to 1st Page
+        state.search.page = 1;
     } catch (error) {
         console.log(error);
         throw error;

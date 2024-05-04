@@ -52,8 +52,8 @@ export const loadSearchResults = async function (query) {
       };
     });
 
-    // console.log(data.data.recipes);
-    // console.log(state);
+    // Reset the search results to 1st Page
+    state.search.page = 1;
   } catch (error) {
     console.log(error);
     throw error;
