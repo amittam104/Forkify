@@ -663,8 +663,14 @@ const controlAddBookmark = function() {
 const controlBookmarks = function() {
     (0, _bookmarksViewJsDefault.default).render(_modelJs.state.bookmarks);
 };
-const controlAddRecipe = function(newRecipe) {
-    console.log(newRecipe);
+const controlAddRecipe = async function(newRecipe) {
+    try {
+        // Upload recipe to the API
+        await _modelJs.uploadRecipe(newRecipe);
+    } catch (error) {
+        console.error("\uD83D\uDCA5", error);
+        (0, _addRecipeViewJsDefault.default).renderError(error.message);
+    }
 };
 const init = function() {
     (0, _bookmarksViewJsDefault.default).addHandlerBookmarks(controlBookmarks);
@@ -1920,6 +1926,7 @@ parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
 parcelHelpers.export(exports, "updateServings", ()=>updateServings);
 parcelHelpers.export(exports, "addBookMark", ()=>addBookMark);
 parcelHelpers.export(exports, "deleteBookmark", ()=>deleteBookmark);
+parcelHelpers.export(exports, "uploadRecipe", ()=>uploadRecipe);
 var _configJs = require("./config.js");
 var _helpersJs = require("./helpers.js");
 const state = {
@@ -2010,6 +2017,32 @@ const init = function() {
     console.log(state.bookmarks);
 };
 init();
+const uploadRecipe = async function(newRecipe) {
+    try {
+        const ingredients = Object.entries(newRecipe).filter((entry)=>entry[0].startsWith("ingredient") && entry[1] !== "").map((ing)=>{
+            const ingArr = ing[1].replaceAll(" ", "").split(",");
+            if (ingArr.length !== 3) throw new Error("Wrong Ingredient Format! Please use correct format.");
+            const [quantity, unit, description] = ingArr;
+            return {
+                quantity: quantity ? +quantity : null,
+                unit,
+                description
+            };
+        });
+        const recipe = {
+            title: newRecipe.title,
+            source_url: newRecipe.sourceUrl,
+            image_url: newRecipe.image,
+            publisher: newRecipe.publisher,
+            cooking_time: +newRecipe.cookingTime,
+            servings: +newRecipe.servings,
+            ingredients
+        };
+        console.log(recipe);
+    } catch (error) {
+        throw error;
+    }
+};
 
 },{"./config.js":"k5Hzs","./helpers.js":"hGI1E","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
